@@ -1,0 +1,33 @@
+language: node_js
+node_js:
+  - '10.16.0'
+
+cache: yarn
+
+install: yarn
+
+jobs:
+  include:
+    # - state: rm_example
+    #   if: tag IS present
+    #   script: rm -R example
+    - state: test
+      if: tag IS present
+      script:
+        - rm -R example
+        - yarn test
+
+    - stage: release
+      if: tag IS present
+      script: yarn build
+      # before_deploy:
+      #   - cp package.json ./dist
+      #   - cd dist
+      deploy:
+        provider: npm
+        email: '$NPM_EMAIL'
+        api_key: '$NPM_TOKEN'
+        skip_cleanup: true
+        on:
+          branch: master
+          tags: true
