@@ -25,8 +25,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}\\node_modules\\eslint\\bin\\eslint.js",
-      "args": ["--cache", "--ext", ".js,.jsx,.ts,.tsx", "--format=pretty", "./"],
+      "program": "${workspaceFolder}\\demo\\index.js",
+      "args": [],
       "sourceMaps": true
     }
   ]
