@@ -76,6 +76,7 @@ module.exports = {
     'no-useless-computed-key': 0,
     'dot-notation': 0,
     'no-return-await': 0,
+    'no-underscore-dangle': 0,
   },
   globals: {
     page: true,

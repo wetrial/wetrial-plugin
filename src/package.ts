@@ -1,10 +1,9 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 // 请求仓库的基类(会带上token)
 function requestNPM(option) {
   return fetch(option.url, {
     method: option.method || 'GET',
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${option.token}`,
@@ -13,7 +12,7 @@ function requestNPM(option) {
 }
 
 // 查询仓库所有包
-function getPackages(option) {
+function getPackages(option: { url: string; token: string }) {
   return requestNPM({
     url: `${option.url}/-/verdaccio/search/**`,
     token: option.token,
@@ -29,7 +28,7 @@ function getPackages(option) {
         }),
       );
     return Promise.all(packageRequests).then(responses => {
-      return responses.map(item => {
+      return responses.map((item: any) => {
         return {
           title: item._id,
           tags: Object.keys(item.versions),
@@ -40,8 +39,7 @@ function getPackages(option) {
   });
 }
 
-getPackages({
-  url: 'http://npm.xxgtalk.cn',
-  token:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsX2dyb3VwcyI6WyJ4aWV4aW5nZW4iXSwibmFtZSI6InhpZXhpbmdlbiIsImdyb3VwcyI6WyJ4aWV4aW5nZW4iLCIkYWxsIiwiJGF1dGhlbnRpY2F0ZWQiLCJAYWxsIiwiQGF1dGhlbnRpY2F0ZWQiLCJhbGwiLCJ4aWV4aW5nZW4iXSwiaWF0IjoxNTgzMDUyOTc5LCJuYmYiOjE1ODMwNTI5NzksImV4cCI6MTU4MzY1Nzc3OX0.zPnpQjxNQyGi07579w1cVe4GwnHCwHDZ3uGJyYdOa4o',
-});
+// 获取远程仓库包情况
+export function getPackagesInfo(option: { url: string; token: string }) {
+  return getPackages(option);
+}

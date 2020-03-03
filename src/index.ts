@@ -1,8 +1,17 @@
 // ref:
 // - https://umijs.org/plugin/develop.html
 import { IApi } from 'umi-types';
+import { getPackagesInfo } from './package';
+import { getLocalPackage, installPackages, unInstallPackages } from './localPackage';
 
 export default function(api: IApi, options) {
+  // options = {
+  //   ...options,
+  //   url: 'http://npm.xxgtalk.cn',
+  //   token:
+  //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsX2dyb3VwcyI6WyJ4aWV4aW5nZW4iXSwibmFtZSI6InhpZXhpbmdlbiIsImdyb3VwcyI6WyJ4aWV4aW5nZW4iLCIkYWxsIiwiJGF1dGhlbnRpY2F0ZWQiLCJAYWxsIiwiQGF1dGhlbnRpY2F0ZWQiLCJhbGwiLCJ4aWV4aW5nZW4iXSwiaWF0IjoxNTgzMDUyOTc5LCJuYmYiOjE1ODMwNTI5NzksImV4cCI6MTU4MzY1Nzc3OX0.zPnpQjxNQyGi07579w1cVe4GwnHCwHDZ3uGJyYdOa4o',
+  // };
+
   // Example: output the webpack config
   api.chainWebpackConfig(config => {
     // console.log(config.toString());
@@ -13,6 +22,12 @@ export default function(api: IApi, options) {
   api.onUISocket(({ action, failure, success }) => {
     // 更新代码
     if (action.type === 'org.xiexingen.wetrial-plugin.updateCode') {
+      // @ts-ignore
+      const { needInstalls, needUnInstalls } = action.payload;
+
+      installPackages(needInstalls);
+      unInstallPackages(needUnInstalls);
+
       success({
         success: true,
         description: '',
@@ -22,44 +37,24 @@ export default function(api: IApi, options) {
       });
     }
     // 查询所有模块列表
-    else if (action.type === 'org.xiexingen.wetrial-plugin.modules') {
-      // git+ssh://git@git.mydomain.com/Username/Repository#{branch|tag}
-      // http://npm.xxgtalk.cn/-/verdaccio/search/**
-      // http://npm.xxgtalk.cn/-/verdaccio/sidebar/@wetrial/template
-      // Authorization Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsX2dyb3VwcyI6WyJ4aWV4aW5nZW4iXSwibmFtZSI6InhpZXhpbmdlbiIsImdyb3VwcyI6WyJ4aWV4aW5nZW4iLCIkYWxsIiwiJGF1dGhlbnRpY2F0ZWQiLCJAYWxsIiwiQGF1dGhlbnRpY2F0ZWQiLCJhbGwiLCJ4aWV4aW5nZW4iXSwiaWF0IjoxNTgzMDUyOTc5LCJuYmYiOjE1ODMwNTI5NzksImV4cCI6MTU4MzY1Nzc3OX0.zPnpQjxNQyGi07579w1cVe4GwnHCwHDZ3uGJyYdOa4o
-      // fetch('http://npm.xxgtalk.cn/-/verdaccio/search/**', {
-      //   method: 'GET',
-      //   credentials: 'include',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization:
-      //       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsX2dyb3VwcyI6WyJ4aWV4aW5nZW4iXSwibmFtZSI6InhpZXhpbmdlbiIsImdyb3VwcyI6WyJ4aWV4aW5nZW4iLCIkYWxsIiwiJGF1dGhlbnRpY2F0ZWQiLCJAYWxsIiwiQGF1dGhlbnRpY2F0ZWQiLCJhbGwiLCJ4aWV4aW5nZW4iXSwiaWF0IjoxNTgzMDUyOTc5LCJuYmYiOjE1ODMwNTI5NzksImV4cCI6MTU4MzY1Nzc3OX0.zPnpQjxNQyGi07579w1cVe4GwnHCwHDZ3uGJyYdOa4o',
-      //   },
-      // }).then(function(response) {
-      //   debugger;
-      // });
-      success({
-        repositorys: [
-          {
-            url: 'https://github.com/wetrial/wetrial',
-            tags: ['v3.0.1', 'v3.0.2', 'v3.0.3'],
-            title: 'Wetrial',
-            curTag: 'v3.0.1',
-          },
-          {
-            url: 'https://github.com/xiexingen/ZuiTieXin',
-            tags: ['0.1', '1.0', '1.1'],
-            title: '文件列表',
-            curTag: '1.0',
-          },
-          {
-            url: 'https://github.com/xiexingen/blog',
-            tags: ['0.1', '1.0', '1.1'],
-            title: '博客',
-            curTag: '1.0',
-          },
-        ],
-      });
+    else if (action.type === 'org.xiexingen.wetrial-plugin.packages') {
+      try {
+        getPackagesInfo({
+          token: options.token,
+          url: options.url,
+        }).then(packages => {
+          // 查询本地当前安装的情况
+          const installedPackages = getLocalPackage({
+            cwd: api.paths.cwd,
+          });
+          success({
+            installedPackages,
+            packages,
+          });
+        });
+      } catch (error) {
+        failure(error);
+      }
     }
   });
 }
