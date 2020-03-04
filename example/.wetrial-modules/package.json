@@ -1,5 +1,6 @@
 {
-  "deps": {
-    "@wetrial/blogs": "^1.0.1"
+  "dependencies": {
+    "@wetrial/blogs": "1.0.1",
+    "@wetrial/template": "1.0.2"
   }
 }

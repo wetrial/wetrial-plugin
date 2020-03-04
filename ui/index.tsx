@@ -31,19 +31,20 @@ export default (api: IUiApi) => {
     const [repositorys, setRepositorys] = useState([]);
     const [installedPackages, setInstalledPackages] = useState({});
     const [form] = Form.useForm();
+    const fetchRepositorys = async () => {
+      setLoading(true);
+      const result: any = await callRemote({
+        type: 'org.xiexingen.wetrial-plugin.packages',
+      });
+      setLoading(false);
+      setRepositorys(result.packages);
+
+      setInstalledPackages(result.installedPackages);
+      form.setFieldsValue(result.installedPackages);
+    };
+
     // 查询仓库列表
     useEffect(() => {
-      const fetchRepositorys = async () => {
-        setLoading(true);
-        const result: any = await callRemote({
-          type: 'org.xiexingen.wetrial-plugin.packages',
-        });
-        setLoading(false);
-        setRepositorys(result.packages);
-
-        setInstalledPackages(result.installedPackages);
-        form.setFieldsValue(result.installedPackages);
-      };
       fetchRepositorys();
     }, []);
 
@@ -93,6 +94,7 @@ export default (api: IUiApi) => {
       setSubmitting(false);
       if (result.success) {
         message.success('安装成功！');
+        fetchRepositorys();
       } else {
         notification.error({
           message: '安装失败',
@@ -119,7 +121,7 @@ export default (api: IUiApi) => {
             renderItem={(item: IMouleItemProp) => {
               const isInstalled = Object.keys(installedPackages).includes(item.title);
               const curIsLastVersion =
-                installedPackages[`${item.title}`] === `^${item.tags[item.tags.length - 1]}`;
+                installedPackages[`${item.title}`] === `${item.tags[item.tags.length - 1]}`;
               return (
                 <List.Item key={item.title}>
                   <List.Item.Meta
@@ -158,7 +160,7 @@ export default (api: IUiApi) => {
                       <Form.Item name={`${item.title}`}>
                         <Select allowClear style={{ width: 160 }} placeholder="请选择版本号">
                           {item.tags.map(tag => (
-                            <Select.Option value={`^${tag}`}>{tag}</Select.Option>
+                            <Select.Option value={`${tag}`}>{tag}</Select.Option>
                           ))}
                         </Select>
                       </Form.Item>

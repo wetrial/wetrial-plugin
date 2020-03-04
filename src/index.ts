@@ -3,8 +3,10 @@
 import { IApi } from 'umi-types';
 import { getPackagesInfo } from './package';
 import { getLocalPackage, installPackages, unInstallPackages } from './localPackage';
+import changeConfig from './config';
 
 export default function(api: IApi, options) {
+  changeConfig({ url: options.url, token: options.token, cwd: api.cwd });
   // options = {
   //   ...options,
   //   url: 'http://npm.xxgtalk.cn',
@@ -19,13 +21,13 @@ export default function(api: IApi, options) {
 
   api.addUIPlugin(require.resolve('../dist/index.umd'));
 
-  api.onUISocket(({ action, failure, success }) => {
+  api.onUISocket(async ({ action, failure, success }) => {
     // 更新代码
     if (action.type === 'org.xiexingen.wetrial-plugin.updateCode') {
       // @ts-ignore
       const { needInstalls, needUnInstalls } = action.payload;
 
-      installPackages(needInstalls);
+      await installPackages(needInstalls);
       unInstallPackages(needUnInstalls);
 
       success({
@@ -44,9 +46,7 @@ export default function(api: IApi, options) {
           url: options.url,
         }).then(packages => {
           // 查询本地当前安装的情况
-          const installedPackages = getLocalPackage({
-            cwd: api.paths.cwd,
-          });
+          const installedPackages = getLocalPackage();
           success({
             installedPackages,
             packages,
