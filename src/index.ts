@@ -15,7 +15,7 @@ export default function(api: IApi, options) {
   // };
 
   // Example: output the webpack config
-  api.chainWebpackConfig(config => {
+  api.chainWebpackConfig(() => {
     // console.log(config.toString());
   });
 
@@ -28,7 +28,7 @@ export default function(api: IApi, options) {
       const { needInstalls, needUnInstalls } = action.payload;
 
       await installPackages(needInstalls);
-      unInstallPackages(needUnInstalls);
+      await unInstallPackages(needUnInstalls);
 
       success({
         success: true,

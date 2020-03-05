@@ -77,6 +77,7 @@ module.exports = {
     'dot-notation': 0,
     'no-return-await': 0,
     'no-underscore-dangle': 0,
+    'no-console': 0,
   },
   globals: {
     page: true,

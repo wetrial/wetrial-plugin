@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { exec } from 'child_process';
 import { cwd, url } from './config';
+import { deleteFolder, copyFolder } from './pathHelper';
 
 // 获取文件，如果文件不存而且autoCreate为true则创建该文件
 function getOrCreateFileJson(fullPath: string, autoCreate: boolean = false) {
@@ -53,6 +54,29 @@ export const installPackages = async (packages: { name: string; version: string 
             error,
           });
         }
+        // 找文件 拷贝到pages下面去
+        packages.forEach(item => {
+          const sourceRoot = path.join(cwd, `./.wetrial-modules/node_modules/${item.name}`);
+          // 从@wetrial/blogs 中解析出blogs
+          const names = item.name.split('/');
+          const moduleName = names.length > 1 ? names[names.length - 1] : names[0];
+          const sourcePagesPath = path.join(sourceRoot, `./dist/pages/${moduleName}`);
+          const destPagesPath = path.join(cwd, './src/pages');
+          const destPagesModulePath = path.join(destPagesPath, moduleName);
+          if (fs.existsSync(destPagesModulePath)) {
+            console.log(`clear ${destPagesModulePath}`);
+            deleteFolder(destPagesModulePath, true);
+          }
+          console.log(`copy folder from ${sourcePagesPath} ==> ${destPagesPath}`);
+          // 页面文件
+          copyFolder(sourcePagesPath, destPagesPath, true);
+          // 路由文件
+          const sourceRoutesPath = path.join(sourceRoot, `./dist/config/modules/${moduleName}`);
+          const destRoutesPath = path.join(cwd, './config/modules');
+          console.log(`copy folder from ${sourceRoutesPath} ==> ${destRoutesPath}`);
+          copyFolder(sourceRoutesPath, destRoutesPath, true);
+        });
+
         resolve({
           success: true,
         });
@@ -62,6 +86,53 @@ export const installPackages = async (packages: { name: string; version: string 
 };
 
 // 卸载包
-export const unInstallPackages = (packages: string[]) => {
-  console.log(packages);
+export const unInstallPackages = async (packages: string[]) => {
+  if (!packages || packages.length === 0) {
+    return;
+  }
+  // eslint-disable-next-line no-new
+  await new Promise((resolve, reject) => {
+    const strPackage = packages.join(' ');
+    const wetrialModulePath = path.join(cwd, '.wetrial-modules');
+    // yarn add @wetrial/blogs @wetrial/template --registry http://npm.xxgtalk.cn
+    console.log(`cd ${wetrialModulePath} | yarn remove ${strPackage} --registry ${url}`);
+    exec(
+      `yarn remove ${strPackage} --registry ${url}`,
+      {
+        cwd: wetrialModulePath,
+      },
+      (error, stdout, stderr) => {
+        console.log(error, stdout, stderr);
+        if (error) {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject({
+            success: false,
+            error,
+          });
+        }
+        // 找文件 拷贝到pages下面去
+        packages.forEach(item => {
+          console.log(`un install package ${item}`);
+          // 从@wetrial/blogs 中解析出blogs
+          const names = item.split('/');
+          const moduleName = names.length > 1 ? names[names.length - 1] : names[0];
+          const destPagesPath = path.join(cwd, `./src/pages/${moduleName}`);
+          if (fs.existsSync(destPagesPath)) {
+            console.log(`delete ${destPagesPath}`);
+            deleteFolder(destPagesPath, true);
+          }
+          // 路由文件
+          const destRoutesPath = path.join(cwd, './config/modules');
+          if (fs.existsSync(destRoutesPath)) {
+            console.log(`delete ${destRoutesPath}`);
+            deleteFolder(destRoutesPath, true);
+          }
+        });
+
+        resolve({
+          success: true,
+        });
+      },
+    );
+  });
 };
