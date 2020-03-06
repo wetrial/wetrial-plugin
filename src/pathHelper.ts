@@ -35,7 +35,9 @@ export function copyFolder(source: string, dest: string, isAbsolutePath: boolean
   }
 
   function createDir(dirPath) {
-    fs.mkdirSync(dirPath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath);
+    }
   }
 
   if (fs.existsSync(sourcePath)) {
