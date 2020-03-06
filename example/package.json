@@ -1,6 +1,3 @@
 {
-  "dependencies": {
-    "@wetrial/blogs": "2.0.2",
-    "@wetrial/template": "1.0.2"
-  }
+  "dependencies": {}
 }

@@ -103,3 +103,17 @@ export function deleteFolder(source: string, isAbsolute: boolean = true) {
     console.log('del folder error', error);
   }
 }
+
+/**
+ * 递归创建目录
+ * @param dirname 目录
+ */
+export function mkdirsSync(dirname) {
+  if (fs.existsSync(dirname)) {
+    return true;
+  } else if (mkdirsSync(path.dirname(dirname))) {
+    fs.mkdirSync(dirname);
+    return true;
+  }
+  return true;
+}

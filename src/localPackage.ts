@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { exec } from 'child_process';
 import { cwd, url } from './config';
-import { deleteFolder, copyFolder } from './pathHelper';
+import { deleteFolder, copyFolder, mkdirsSync } from './pathHelper';
 
 // 获取文件，如果文件不存而且autoCreate为true则创建该文件
 function getOrCreateFileJson(fullPath: string, autoCreate: boolean = false) {
@@ -10,6 +10,8 @@ function getOrCreateFileJson(fullPath: string, autoCreate: boolean = false) {
     const content = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
     return [true, content];
   } else if (autoCreate) {
+    const folderPath = path.dirname(fullPath);
+    mkdirsSync(folderPath);
     fs.writeFileSync(fullPath, '{}');
   }
   return [false, undefined];
