@@ -6,7 +6,7 @@ import fs from 'fs';
  * @param delPath 要删除的文件
  * @param isAbsolute 是否绝对路径
  */
-function deleteFile(delPath, isAbsolute: boolean) {
+export function deleteFile(delPath, isAbsolute: boolean) {
   let deletePath = delPath;
   deletePath = isAbsolute ? path : path.join(__dirname, deletePath);
   try {

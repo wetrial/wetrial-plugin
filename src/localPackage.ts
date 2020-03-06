@@ -2,7 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import { exec } from 'child_process';
 import { cwd, url } from './config';
-import { deleteFolder, copyFolder, mkdirsSync } from './pathHelper';
+import { copyFolder, mkdirsSync } from './pathHelper';
+import rimraf from 'rimraf';
 
 // 获取文件，如果文件不存而且autoCreate为true则创建该文件
 function getOrCreateFileJson(fullPath: string, autoCreate: boolean = false) {
@@ -67,7 +68,10 @@ export const installPackages = async (packages: { name: string; version: string 
           const destPagesModulePath = path.join(destPagesPath, moduleName);
           if (fs.existsSync(destPagesModulePath)) {
             console.log(`clear ${destPagesModulePath}`);
-            deleteFolder(destPagesModulePath, true);
+            rimraf(destPagesModulePath, err => {
+              console.log(`clear ${destPagesModulePath} error:${err}`);
+            });
+            // deleteFolder(destPagesModulePath, true);
           }
           console.log(`copy folder from ${sourcePagesPath} ==> ${destPagesPath}`);
           // 页面文件
@@ -76,7 +80,7 @@ export const installPackages = async (packages: { name: string; version: string 
           const sourceRoutesPath = path.join(sourceRoot, `./dist/config/modules/${moduleName}.ts`);
           const destRoutesPath = path.join(cwd, './config/modules');
           console.log(`copy folder from ${sourceRoutesPath} ==> ${destRoutesPath}`);
-          copyFolder(sourceRoutesPath, destRoutesPath, true);
+          fs.copyFileSync(sourceRoutesPath, destRoutesPath);
         });
 
         resolve({
@@ -121,13 +125,18 @@ export const unInstallPackages = async (packages: string[]) => {
           const destPagesPath = path.join(cwd, `./src/pages/${moduleName}`);
           if (fs.existsSync(destPagesPath)) {
             console.log(`delete ${destPagesPath}`);
-            deleteFolder(destPagesPath, true);
+            rimraf(destPagesPath, err => {
+              console.log(`delete ${destPagesPath} error:${err}`);
+            });
           }
           // 路由文件
           const destRoutesPath = path.join(cwd, './config/modules');
           if (fs.existsSync(destRoutesPath)) {
             console.log(`delete ${destRoutesPath}`);
-            deleteFolder(destRoutesPath, true);
+            rimraf(destRoutesPath, err => {
+              console.log(`delete ${destRoutesPath} error:${err}`);
+            });
+            // deleteFolder(destRoutesPath, true);
           }
         });
 
