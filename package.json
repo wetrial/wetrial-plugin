@@ -1,5 +1,5 @@
 {
-  "name": "wetrial-plugin",
+  "name": "wetrial-ui-plugin",
   "version": "0.0.1",
   "description": "wetrial module plugins",
   "authors": {
@@ -19,7 +19,10 @@
     "start": "cross-env CURRENT_PROJECT=example umi ui --watch",
     "build": "father build",
     "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish",
-    "debug": "node --inspect-brk -r ts-node/register src/package.ts"
+    "debug": "node --inspect-brk -r ts-node/register src/package.ts",
+    "patch": "yarn version --patch && git push origin master && git push origin --tags",
+    "minor": "yarn version --minor && git push origin master && git push origin --tags",
+    "major": "yarn version --major && git push origin master && git push origin --tags"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.0.2",

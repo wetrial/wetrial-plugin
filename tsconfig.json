@@ -14,5 +14,6 @@
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "declaration": false
-  }
+  },
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "lib", "fixtures", "examples"]
 }

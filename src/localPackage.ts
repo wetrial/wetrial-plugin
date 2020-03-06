@@ -69,13 +69,7 @@ export const installPackages = async (packages: { name: string; version: string 
           const destPagesModulePath = path.join(destPagesPath, moduleName);
           if (fs.existsSync(destPagesModulePath)) {
             log.info(`clear ${destPagesModulePath}`);
-            rimraf(destPagesModulePath, err => {
-              if (err) {
-                log.error(`clear ${destPagesModulePath} error:${err}`);
-              } else {
-                log.info(`clear ${destPagesModulePath}`);
-              }
-            });
+            rimraf.sync(destPagesModulePath);
             // deleteFolder(destPagesModulePath, true);
           }
           log.info(`copy folder from ${sourcePagesPath} ==> ${destPagesPath}`);
@@ -129,25 +123,14 @@ export const unInstallPackages = async (packages: string[]) => {
           const moduleName = names.length > 1 ? names[names.length - 1] : names[0];
           const destPagesPath = path.join(cwd, `./src/pages/${moduleName}`);
           if (fs.existsSync(destPagesPath)) {
-            rimraf(destPagesPath, err => {
-              if (err) {
-                log.error(`clear ${destPagesPath} error:${err}`);
-              } else {
-                log.info(`clear ${destPagesPath}`);
-              }
-            });
+            log.info(`clear ${destPagesPath}`);
+            rimraf.sync(destPagesPath);
           }
           // 路由文件
           const destRoutesPath = path.join(cwd, `./config/modules/${moduleName}.ts`);
           if (fs.existsSync(destRoutesPath)) {
-            rimraf(destRoutesPath, err => {
-              if (err) {
-                log.error(`clear ${destRoutesPath} error:${err}`);
-              } else {
-                log.info(`clear ${destRoutesPath}`);
-              }
-            });
-            // deleteFolder(destRoutesPath, true);
+            log.info(`clear ${destRoutesPath}`);
+            rimraf.sync(destRoutesPath);
           }
         });
 
