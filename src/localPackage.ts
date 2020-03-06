@@ -49,9 +49,9 @@ export const installPackages = async (packages: { name: string; version: string 
       {
         cwd: wetrialModulePath,
       },
-      (error, stdout, stderr) => {
-        log.error(error, stdout, stderr);
+      error => {
         if (error) {
+          log.error(error);
           // eslint-disable-next-line prefer-promise-reject-errors
           reject({
             success: false,
@@ -106,15 +106,15 @@ export const unInstallPackages = async (packages: string[]) => {
     const strPackage = packages.join(' ');
     const wetrialModulePath = path.join(cwd, '.wetrial-modules');
     // yarn add @wetrial/blogs @wetrial/template --registry http://npm.xxgtalk.cn
-    console.log(`cd ${wetrialModulePath} | yarn remove ${strPackage} --registry ${url}`);
+    log.info(`cd ${wetrialModulePath} | yarn remove ${strPackage} --registry ${url}`);
     exec(
       `yarn remove ${strPackage} --registry ${url}`,
       {
         cwd: wetrialModulePath,
       },
-      (error, stdout, stderr) => {
-        console.log(error, stdout, stderr);
+      error => {
         if (error) {
+          log.error(error);
           // eslint-disable-next-line prefer-promise-reject-errors
           reject({
             success: false,
@@ -123,7 +123,7 @@ export const unInstallPackages = async (packages: string[]) => {
         }
         // 找文件 拷贝到pages下面去
         packages.forEach(item => {
-          console.log(`un install package ${item}`);
+          log.info(`un install package ${item}`);
           // 从@wetrial/blogs 中解析出blogs
           const names = item.split('/');
           const moduleName = names.length > 1 ? names[names.length - 1] : names[0];
