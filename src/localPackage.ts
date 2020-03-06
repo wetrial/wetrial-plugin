@@ -130,7 +130,7 @@ export const unInstallPackages = async (packages: string[]) => {
             });
           }
           // 路由文件
-          const destRoutesPath = path.join(cwd, './config/modules/${moduleName}.ts');
+          const destRoutesPath = path.join(cwd, `./config/modules/${moduleName}.ts`);
           if (fs.existsSync(destRoutesPath)) {
             console.log(`delete ${destRoutesPath}`);
             rimraf(destRoutesPath, err => {
