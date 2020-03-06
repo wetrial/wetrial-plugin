@@ -7,3 +7,5 @@
 /example/pages/.umi-production
 /lib
 /dist
+/example/.wetrial-modules
+!/example/.wetrial-modules/package.json
