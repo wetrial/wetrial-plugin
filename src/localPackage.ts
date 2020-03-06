@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { exec } from 'child_process';
-import { cwd, url } from './config';
+import { cwd, url, log } from './config';
 import { copyFolder, mkdirsSync } from './pathHelper';
 import rimraf from 'rimraf';
 
@@ -42,14 +42,15 @@ export const installPackages = async (packages: { name: string; version: string 
     const strPackage = packages.map(item => `${item.name}@${item.version}`).join(' ');
     const wetrialModulePath = path.join(cwd, '.wetrial-modules');
     // yarn add @wetrial/blogs @wetrial/template --registry http://npm.xxgtalk.cn
-    console.log(`cd ${wetrialModulePath} | yarn add ${strPackage} --registry ${url}`);
+
+    log.info(`cd ${wetrialModulePath} | yarn add ${strPackage} --registry ${url}`);
     exec(
       `yarn add ${strPackage} --registry ${url}`,
       {
         cwd: wetrialModulePath,
       },
       (error, stdout, stderr) => {
-        console.log(error, stdout, stderr);
+        log.error(error, stdout, stderr);
         if (error) {
           // eslint-disable-next-line prefer-promise-reject-errors
           reject({
@@ -67,19 +68,23 @@ export const installPackages = async (packages: { name: string; version: string 
           const destPagesPath = path.join(cwd, './src/pages');
           const destPagesModulePath = path.join(destPagesPath, moduleName);
           if (fs.existsSync(destPagesModulePath)) {
-            console.log(`clear ${destPagesModulePath}`);
+            log.info(`clear ${destPagesModulePath}`);
             rimraf(destPagesModulePath, err => {
-              console.log(`clear ${destPagesModulePath} error:${err}`);
+              if (err) {
+                log.error(`clear ${destPagesModulePath} error:${err}`);
+              } else {
+                log.info(`clear ${destPagesModulePath}`);
+              }
             });
             // deleteFolder(destPagesModulePath, true);
           }
-          console.log(`copy folder from ${sourcePagesPath} ==> ${destPagesPath}`);
+          log.info(`copy folder from ${sourcePagesPath} ==> ${destPagesPath}`);
           // 页面文件
           copyFolder(sourcePagesPath, destPagesPath, true);
           // 路由文件
           const sourceRoutesPath = path.join(sourceRoot, `./dist/config/modules/${moduleName}.ts`);
           const destRoutesPath = path.join(cwd, `./config/modules/${moduleName}.ts`);
-          console.log(`copy folder from ${sourceRoutesPath} ==> ${destRoutesPath}`);
+          log.info(`copy folder from ${sourceRoutesPath} ==> ${destRoutesPath}`);
           fs.copyFileSync(sourceRoutesPath, destRoutesPath);
         });
 
@@ -124,17 +129,23 @@ export const unInstallPackages = async (packages: string[]) => {
           const moduleName = names.length > 1 ? names[names.length - 1] : names[0];
           const destPagesPath = path.join(cwd, `./src/pages/${moduleName}`);
           if (fs.existsSync(destPagesPath)) {
-            console.log(`delete ${destPagesPath}`);
             rimraf(destPagesPath, err => {
-              console.log(`delete ${destPagesPath} error:${err}`);
+              if (err) {
+                log.error(`clear ${destPagesPath} error:${err}`);
+              } else {
+                log.info(`clear ${destPagesPath}`);
+              }
             });
           }
           // 路由文件
           const destRoutesPath = path.join(cwd, `./config/modules/${moduleName}.ts`);
           if (fs.existsSync(destRoutesPath)) {
-            console.log(`delete ${destRoutesPath}`);
             rimraf(destRoutesPath, err => {
-              console.log(`delete ${destRoutesPath} error:${err}`);
+              if (err) {
+                log.error(`clear ${destRoutesPath} error:${err}`);
+              } else {
+                log.info(`clear ${destRoutesPath}`);
+              }
             });
             // deleteFolder(destRoutesPath, true);
           }

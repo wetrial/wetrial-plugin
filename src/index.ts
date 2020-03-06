@@ -6,7 +6,7 @@ import { getLocalPackage, installPackages, unInstallPackages } from './localPack
 import changeConfig from './config';
 
 export default function(api: IApi, options) {
-  changeConfig({ url: options.url, token: options.token, cwd: api.cwd });
+  changeConfig({ url: options.url, token: options.token, cwd: api.cwd, log: api.log });
   // options = {
   //   ...options,
   //   url: 'http://npm.xxgtalk.cn',
@@ -26,10 +26,8 @@ export default function(api: IApi, options) {
     if (action.type === 'org.xiexingen.wetrial-plugin.updateCode') {
       // @ts-ignore
       const { needInstalls, needUnInstalls } = action.payload;
-
       await installPackages(needInstalls);
       await unInstallPackages(needUnInstalls);
-
       success({
         success: true,
         description: '',

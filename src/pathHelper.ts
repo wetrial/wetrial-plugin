@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { log } from './config';
 
 /**
  * 删除指定文件
@@ -13,10 +14,10 @@ export function deleteFile(delPath, isAbsolute: boolean) {
     if (fs.existsSync(deletePath)) {
       fs.unlinkSync(deletePath);
     } else {
-      console.log('inexistence path：', deletePath);
+      log.info(`inexistence path：${deletePath}`);
     }
   } catch (error) {
-    console.log('del error', error);
+    log.error('del error', error);
   }
 }
 
@@ -63,12 +64,12 @@ export function copyFolder(source: string, dest: string, isAbsolutePath: boolean
           fs.accessSync(path.join(crp, '..'), fs.constants.W_OK);
           copyFolder(ccp, crp, true);
         } catch (error) {
-          console.log('folder write error:', error);
+          log.error('folder write error:', error);
         }
       }
     }
   } else {
-    console.log('do not exist path: ', sourcePath);
+    log.info('do not exist path: ', sourcePath);
   }
 }
 
@@ -99,10 +100,10 @@ export function deleteFolder(source: string, isAbsolute: boolean = true) {
       };
       delFn(delPath);
     } else {
-      console.log('do not exist: ', delPath);
+      log.info('do not exist: ', delPath);
     }
   } catch (error) {
-    console.log('del folder error', error);
+    log.error('del folder error', error);
   }
 }
 
