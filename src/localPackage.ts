@@ -78,7 +78,7 @@ export const installPackages = async (packages: { name: string; version: string 
           copyFolder(sourcePagesPath, destPagesPath, true);
           // 路由文件
           const sourceRoutesPath = path.join(sourceRoot, `./dist/config/modules/${moduleName}.ts`);
-          const destRoutesPath = path.join(cwd, './config/modules');
+          const destRoutesPath = path.join(cwd, './config/modules/${moduleName}.ts');
           console.log(`copy folder from ${sourceRoutesPath} ==> ${destRoutesPath}`);
           fs.copyFileSync(sourceRoutesPath, destRoutesPath);
         });
@@ -130,7 +130,7 @@ export const unInstallPackages = async (packages: string[]) => {
             });
           }
           // 路由文件
-          const destRoutesPath = path.join(cwd, './config/modules');
+          const destRoutesPath = path.join(cwd, './config/modules/${moduleName}.ts');
           if (fs.existsSync(destRoutesPath)) {
             console.log(`delete ${destRoutesPath}`);
             rimraf(destRoutesPath, err => {
