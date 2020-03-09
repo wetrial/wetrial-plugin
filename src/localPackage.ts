@@ -76,8 +76,8 @@ export const installPackages = async (packages: { name: string; version: string 
           // 页面文件
           copyFolder(sourcePagesPath, destPagesPath, true);
           // 路由文件
-          const sourceRoutesPath = path.join(sourceRoot, `./dist/config/modules/${moduleName}.ts`);
-          const destRoutesPath = path.join(cwd, `./config/modules/${moduleName}.ts`);
+          const sourceRoutesPath = path.join(sourceRoot, `./dist/config/routes/${moduleName}.ts`);
+          const destRoutesPath = path.join(cwd, `./config/routes/${moduleName}.ts`);
           log.info(`copy folder from ${sourceRoutesPath} ==> ${destRoutesPath}`);
           fs.copyFileSync(sourceRoutesPath, destRoutesPath);
         });
@@ -127,7 +127,7 @@ export const unInstallPackages = async (packages: string[]) => {
             rimraf.sync(destPagesPath);
           }
           // 路由文件
-          const destRoutesPath = path.join(cwd, `./config/modules/${moduleName}.ts`);
+          const destRoutesPath = path.join(cwd, `./config/routes/${moduleName}.ts`);
           if (fs.existsSync(destRoutesPath)) {
             log.info(`clear ${destRoutesPath}`);
             rimraf.sync(destRoutesPath);
