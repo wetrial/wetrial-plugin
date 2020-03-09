@@ -6,7 +6,7 @@
     "name": "xiexingen",
     "email": "1002275364@qq.com"
   },
-  "repository": "https://github.com/wetrial/wetrial-plugin",
+  "repository": "https://github.com/wetrial/wetrial-ui-plugin",
   "peerDependencies": {
     "antd": "4.x",
     "react": "^16.8.6",
