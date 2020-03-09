@@ -6,6 +6,7 @@ export default {
   plugins: [
     [
       join(__dirname, '..', require('../package').main || 'index.js'),
+      // 'D:/Work/Project/wetrial-ui-plugin/lib/index.js',
       {
         url: 'http://npm.xxgtalk.cn',
         token:

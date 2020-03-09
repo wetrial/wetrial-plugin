@@ -1,15 +1,14 @@
-
 export default [
   {
-    cjs: "babel",
+    cjs: 'babel',
   },
   {
-    entry: "ui/index.tsx",
+    entry: 'ui/index.tsx',
     typescriptOpts: {
       check: false,
     },
     umd: {
-      name: "wetrial-plugin",
+      name: 'wetrial-ui-plugin',
       minFile: false,
     },
   },

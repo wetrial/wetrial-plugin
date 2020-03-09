@@ -1,30 +1,29 @@
 import fetch from 'node-fetch';
+import { url, token } from './config';
 
 // 请求仓库的基类(会带上token)
-function requestNPM(option) {
+function requestNPM(option: { url: string; method: string }) {
   return fetch(option.url, {
-    method: option.method || 'GET',
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${option.token}`,
+      Authorization: `Bearer ${token}`,
     },
   }).then(res => res.json());
 }
 
 // 查询仓库所有包
-function getPackages(option: { url: string; token: string }) {
+export function getPackages() {
   return requestNPM({
-    url: `${option.url}/-/verdaccio/search/**`,
-    token: option.token,
+    url: `${url}/-/verdaccio/search/**`,
     method: 'GET',
   }).then(response => {
     const packageRequests = response
       .map(item => item.name)
       .map(name =>
         requestNPM({
-          url: `${option.url}/-/verdaccio/sidebar/${name}`,
+          url: `${url}/-/verdaccio/sidebar/${name}`,
           method: 'GET',
-          token: option.token,
         }),
       );
     return Promise.all(packageRequests).then(responses => {
@@ -37,9 +36,4 @@ function getPackages(option: { url: string; token: string }) {
       });
     });
   });
-}
-
-// 获取远程仓库包情况
-export function getPackagesInfo(option: { url: string; token: string }) {
-  return getPackages(option);
 }
