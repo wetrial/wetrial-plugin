@@ -7,15 +7,16 @@ wetrial
 
 ## Install
 
-```bash
+``` bash
 # or yarn
 $ npm install
 ```
+
 ## Development UI
 
 UI start:
 
-```bash
+``` bash
 $ npm run build --watch
 $ npm run start
 ```
@@ -24,7 +25,7 @@ $ npm run start
 
 UI mini start:
 
-```bash
+``` bash
 $ npm run build --watch
 $ npm run start:mini
 ```
@@ -33,13 +34,13 @@ $ npm run start:mini
 
 ## Usage
 
-Configure in `.umirc.js`,
+Configure in `.umirc.js` , 
 
-```js
+``` js
 export default {
-  plugins: [
-    ['umi-plugin-wetrial-plugin', options],
-  ],
+    plugins: [
+        ['wetrial-ui-plugin', options],
+    ],
 }
 ```
 
@@ -50,3 +51,4 @@ TODO
 ## LICENSE
 
 MIT
+
